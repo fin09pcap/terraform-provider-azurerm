@@ -158,6 +158,13 @@ func resourceArmLinuxVirtualMachineScaleSet() *schema.Resource {
 
 			"plan": planSchema(),
 
+			"platform_fault_domain": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      5,
+				ValidateFunc: validation.IntBetween(1, 5),
+			},
+
 			"priority": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -424,6 +431,7 @@ func resourceArmLinuxVirtualMachineScaleSetCreate(d *schema.ResourceData, meta i
 			DoNotRunExtensionsOnOverprovisionedVMs: utils.Bool(d.Get("do_not_run_extensions_on_overprovisioned_machines").(bool)),
 			Overprovision:                          utils.Bool(d.Get("overprovision").(bool)),
 			SinglePlacementGroup:                   utils.Bool(d.Get("single_placement_group").(bool)),
+			PlatformFaultDomainCount:               utils.Int32(d.Get("platform_fault_domain").(int32)),
 			VirtualMachineProfile:                  &virtualMachineProfile,
 			UpgradePolicy:                          &upgradePolicy,
 		},
