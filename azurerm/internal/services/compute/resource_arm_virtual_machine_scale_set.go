@@ -199,7 +199,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Default:  true,
 			},
 
-			"platform_fault_domain": {
+			"platform_fault_domain_count": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      5,
@@ -862,6 +862,7 @@ func resourceArmVirtualMachineScaleSetCreateUpdate(d *schema.ResourceData, meta 
 	automaticOsUpgrade := d.Get("automatic_os_upgrade").(bool)
 	overprovision := d.Get("overprovision").(bool)
 	singlePlacementGroup := d.Get("single_placement_group").(bool)
+	platformFaultDomainCount := int32(d.Get("platform_fault_domain_count").(int))
 	priority := d.Get("priority").(string)
 	evictionPolicy := d.Get("eviction_policy").(string)
 
@@ -880,8 +881,9 @@ func resourceArmVirtualMachineScaleSetCreateUpdate(d *schema.ResourceData, meta 
 			ExtensionProfile: extensions,
 			Priority:         compute.VirtualMachinePriorityTypes(priority),
 		},
-		Overprovision:        &overprovision,
-		SinglePlacementGroup: &singlePlacementGroup,
+		Overprovision:            &overprovision,
+		SinglePlacementGroup:     &singlePlacementGroup,
+		PlatformFaultDomainCount: &platformFaultDomainCount,
 	}
 
 	if strings.EqualFold(priority, string(compute.Low)) {
@@ -1010,7 +1012,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 		}
 		d.Set("overprovision", properties.Overprovision)
 		d.Set("single_placement_group", properties.SinglePlacementGroup)
-		d.Set("platform_fault_domain", properties.PlatformFaultDomainCount)
+		d.Set("platform_fault_domain_count", properties.PlatformFaultDomainCount)
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
 			d.Set("license_type", profile.LicenseType)
