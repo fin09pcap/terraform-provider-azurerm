@@ -199,6 +199,13 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Default:  true,
 			},
 
+			"platform_fault_domain": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      5,
+				ValidateFunc: validation.IntBetween(1, 5),
+			},
+
 			"single_placement_group": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -1003,6 +1010,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 		}
 		d.Set("overprovision", properties.Overprovision)
 		d.Set("single_placement_group", properties.SinglePlacementGroup)
+		d.Set("platform_fault_domain", properties.PlatformFaultDomainCount)
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
 			d.Set("license_type", profile.LicenseType)
